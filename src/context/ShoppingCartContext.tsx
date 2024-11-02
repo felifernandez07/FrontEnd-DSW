@@ -1,92 +1,124 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { ShoppingCart } from "../components/ShoppingCart.tsx";
 import { useLocalStorage } from "../hooks/useLocalStorage.ts";
 
+type Product = {
+    id: string;
+    nombre: string;
+    descripcion: string;
+    precio: number;
+    stock: number;
+    imagen: string;  // Agrega esta propiedad si es necesaria
+};
 
 type ShoppingCartProviderProps = {
-    children: ReactNode
-}
+    children: ReactNode;
+};
 
 type CartItem = {
-    id: number
-    quantity: number
-}
+    id: string;
+    quantity: number;
+};
 
 type ShoppingCartContext = {
-    openCart: () => void
-    closeCart: () => void
-    getItemQuantity: (id: number) => number
-    increaseCartQuantity: (id: number) => void
-    decreaseCartQuantity: (id: number) => void
-    removeFromCart: (id: number) => void
-    cartQuantity: number
-    cartItems: CartItem[]
-}
+    openCart: () => void;
+    closeCart: () => void;
+    getItemQuantity: (id: string) => number;
+    increaseCartQuantity: (id: string) => void;
+    decreaseCartQuantity: (id: string) => void;
+    removeFromCart: (id: string) => void;
+    cartQuantity: number;
+    cartItems: CartItem[];
+    products: Product[];  // Añade productos aquí
+};
 
-
-const ShoppingCartContext = createContext({} as ShoppingCartContext)
+const ShoppingCartContext = createContext({} as ShoppingCartContext);
 
 export function useShoppingCart() {
-    return useContext(ShoppingCartContext)
+    return useContext(ShoppingCartContext);
 }
 
-export function ShoppingCartProvider({children}: ShoppingCartProviderProps) {
-    const [isOpen, setIsOpen] = useState(false)
-    const [cartItems, setCartItems] = useLocalStorage<CartItem[]> ("shopping-cart",[])
+export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("shopping-cart", []);
+    const [products, setProducts] = useState<Product[]>([]);  // Añade estado para los productos
 
-    const cartQuantity = cartItems.reduce((quantity, item) =>item.quantity + quantity, 0)
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/api/products');
+            setProducts(response.data.data);
+        } catch (error) {
+            console.error("Error fetching products", error);
+        }
+    };
 
-    const openCart = () => setIsOpen(true)
-    const closeCart = () => setIsOpen(false)
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
-    function getItemQuantity(id: number) {
-        return cartItems.find(item => item.id === id) ?.quantity || 0
+    const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);
+
+    const openCart = () => setIsOpen(true);
+    const closeCart = () => setIsOpen(false);
+
+    function getItemQuantity(id: string) {
+        return cartItems.find(item => item.id === id)?.quantity || 0;
     }
 
-    function increaseCartQuantity(id: number) {
+    function increaseCartQuantity(id: string) {
         setCartItems(currItems => {
-            if (currItems.find(item => item.id === id)== null) {
-                return [...currItems, {id, quantity: 1}]
+            if (currItems.find(item => item.id === id) == null) {
+                return [...currItems, { id, quantity: 1 }];
             } else {
                 return currItems.map(item => {
                     if (item.id === id) {
-                    return{...item, quantity: item.quantity +1}
+                        return { ...item, quantity: item.quantity + 1 };
                     } else {
-                      return item 
-                      }
-                    })
-            } 
-        })
+                        return item;
+                    }
+                });
+            }
+        });
     }
 
-
-    function decreaseCartQuantity(id: number) {
+    function decreaseCartQuantity(id: string) {
         setCartItems(currItems => {
             if (currItems.find(item => item.id === id)?.quantity === 1) {
-                return currItems.filter(item => item.id !== id)
+                return currItems.filter(item => item.id !== id);
             } else {
                 return currItems.map(item => {
                     if (item.id === id) {
-                    return{...item, quantity: item.quantity -1}
+                        return { ...item, quantity: item.quantity - 1 };
                     } else {
-                    return item 
+                        return item;
                     }
-                })
-        } 
-    })  
-    }   
+                });
+            }
+        });
+    }
 
-    function removeFromCart (id: number){
-        setCartItems(currItems => {
-            return currItems.filter(item => item.id !== id)
-        })
+    function removeFromCart(id: string) {
+        setCartItems(currItems => currItems.filter(item => item.id !== id));
     }
 
     return (
-        <ShoppingCartContext.Provider value={{ getItemQuantity, increaseCartQuantity, decreaseCartQuantity, removeFromCart, openCart, closeCart, cartItems, cartQuantity }}>
+        <ShoppingCartContext.Provider
+            value={{
+                getItemQuantity,
+                increaseCartQuantity,
+                decreaseCartQuantity,
+                removeFromCart,
+                openCart,
+                closeCart,
+                cartItems,
+                cartQuantity,
+                products,  // Provee productos en el contexto
+            }}
+        >
             {children}
-            <ShoppingCart isOpen ={isOpen} />
+            <ShoppingCart isOpen={isOpen} />
         </ShoppingCartContext.Provider>
-    )
+    );
 }
 
