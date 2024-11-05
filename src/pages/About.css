@@ -1,0 +1,66 @@
+.about-page {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #4b3832; /* tono de café oscuro */
+}
+
+.about-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #5a3e36; /* tono marrón más cálido */
+  margin-bottom: 0.5rem;
+}
+
+.about-lead {
+  font-size: 1.2rem;
+  color: #6b4e42; /* tono más claro para el subtítulo */
+}
+
+.about-img {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.about-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.about-subtitle {
+  font-size: 2.2rem; /* Aumentado de 1.8rem a 2.2rem */
+  color: #5a3e36;
+  font-weight: 700; /* Incrementado el grosor de la fuente */
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.about-description {
+  font-size: 1.1rem;
+  color: #6b4e42;
+  line-height: 1.6;
+}
+
+.about-card {
+  background-color: #f8f5f2;
+  border: none;
+  padding: 2rem;
+}
+
+.social-icons .social-icon {
+  color: #5a3e36;
+  transition: color 0.3s ease;
+}
+
+.social-icons .social-icon:hover {
+  color: #d88c51; /* color más brillante al pasar el cursor */
+}
+
+button {
+  background-color: #d88c51;
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #b56c3e; /* color más oscuro en hover */
+}
