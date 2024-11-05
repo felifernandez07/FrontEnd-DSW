@@ -13,7 +13,8 @@ type CartItemProps = {
 
 export function CartItem({ id, nombre, precio, imgUrl, quantity }: CartItemProps) {
     const { removeFromCart } = useShoppingCart();
-    const imagePath = imgUrl || `/imgs/${id}.jpg`;
+    const formattedName = nombre.replace(/\s+/g, '_').toLowerCase();
+    const imagePath = imgUrl || `/imgs/${formattedName}.jpg`;
     return (
         <Stack direction="horizontal" gap={2} className="d-flex align-items-center">
             <img
