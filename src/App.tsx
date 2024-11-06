@@ -5,6 +5,8 @@ import { Store } from "./pages/Store"
 import { About } from "./pages/About"
 import { Navbar } from "./components/Navbar"
 import { ShoppingCartProvider } from "./context/ShoppingCartContext.tsx"
+import { ManageBrandsAndClasses } from "./pages/ManageBrandsAndClasses";
+
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/store" element={<Store />} />
       <Route path="/about" element={<About />} />
+      <Route path="/manage-brands-and-classes" element={<ManageBrandsAndClasses />} />
     </Routes>
 
   </Container>

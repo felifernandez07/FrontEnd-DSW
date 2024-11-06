@@ -1,4 +1,4 @@
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Container } from "react-bootstrap";
 import { StoreItem } from "../components/StoreItem";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -41,7 +41,6 @@ export function Store() {
     return (
         <>
             <h1>Store</h1>
-            <AddProductForm onProductAdded={fetchProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
             <Row md={2} xs={1} lg={3} className="g-3">
                 {products.map(product => (
                     <Col key={product.id}>
@@ -49,6 +48,9 @@ export function Store() {
                     </Col>
                 ))}
             </Row>
+            <Container className="mt-5">
+                <AddProductForm onProductAdded={fetchProducts} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
+            </Container>
         </>
     );
 }

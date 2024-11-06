@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Form, Button, Card, Container } from "react-bootstrap";
 
 interface AddProductFormProps {
     onProductAdded: () => void;
@@ -17,6 +19,18 @@ type Product = {
     productClass: string;
 };
 
+type Brand = {
+    id: string;
+    nombre: string;
+    descripcion: string;
+};
+
+type Class = {
+    id: string;
+    name: string;
+    description: string;
+};
+
 export function AddProductForm({ onProductAdded, selectedProduct, setSelectedProduct }: AddProductFormProps) {
     const [formData, setFormData] = useState({
         nombre: "",
@@ -26,6 +40,33 @@ export function AddProductForm({ onProductAdded, selectedProduct, setSelectedPro
         productBrand: "",
         productClass: ""
     });
+
+    const [brands, setBrands] = useState<Brand[]>([]);
+    const [classes, setClasses] = useState<Class[]>([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchBrands = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/api/product/brands");
+                setBrands(Array.isArray(response.data.data) ? response.data.data : []);
+            } catch (error) {
+                console.error("Error al obtener las marcas", error);
+            }
+        };
+
+        const fetchClasses = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/api/product/classes");
+                setClasses(Array.isArray(response.data.data) ? response.data.data : []);
+            } catch (error) {
+                console.error("Error al obtener las clases", error);
+            }
+        };
+
+        fetchBrands();
+        fetchClasses();
+    }, []);
 
     useEffect(() => {
         if (selectedProduct) {
@@ -40,8 +81,8 @@ export function AddProductForm({ onProductAdded, selectedProduct, setSelectedPro
         }
     }, [selectedProduct]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -50,7 +91,7 @@ export function AddProductForm({ onProductAdded, selectedProduct, setSelectedPro
         try {
             if (selectedProduct) {
                 await axios.put(`http://localhost:3000/api/products/${selectedProduct.id}`, formData);
-                setSelectedProduct(null);  // Limpia el formulario tras editar
+                setSelectedProduct(null);
             } else {
                 await axios.post("http://localhost:3000/api/products", formData);
             }
@@ -68,15 +109,98 @@ export function AddProductForm({ onProductAdded, selectedProduct, setSelectedPro
         }
     };
 
+    const handleNavigate = () => {
+        navigate("/manage-brands-and-classes");
+    };
+
     return (
-        <form onSubmit={handleSubmit}>
-            <input name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} required />
-            <input name="descripcion" placeholder="Descripción" value={formData.descripcion} onChange={handleChange} required />
-            <input name="precio" placeholder="Precio" value={formData.precio} onChange={handleChange} required />
-            <input name="stock" placeholder="Stock" value={formData.stock} onChange={handleChange} required />
-            <input name="productBrand" placeholder="ID de Marca" value={formData.productBrand} onChange={handleChange} required />
-            <input name="productClass" placeholder="ID de Clase" value={formData.productClass} onChange={handleChange} required />
-            <button type="submit">{selectedProduct ? "Actualizar Producto" : "Agregar Producto"}</button>
-        </form>
+        <Card className="mb-4">
+            <Card.Body>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3">
+                        <Form.Control
+                            name="nombre"
+                            placeholder="Nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                        <Form.Control
+                            name="descripcion"
+                            placeholder="Descripción"
+                            value={formData.descripcion}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                        <Form.Control
+                            type="number"
+                            name="precio"
+                            placeholder="Precio"
+                            value={formData.precio}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                        <Form.Control
+                            type="number"
+                            name="stock"
+                            placeholder="Stock"
+                            value={formData.stock}
+                            onChange={handleChange}
+                            required
+                        />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                        <Form.Select
+                            name="productBrand"
+                            value={formData.productBrand}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Seleccione una marca</option>
+                            {brands.map(brand => (
+                                <option key={brand.id} value={brand.id}>
+                                    {brand.nombre}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                        <Form.Select
+                            name="productClass"
+                            value={formData.productClass}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Seleccione una clase</option>
+                            {classes.map(cl => (
+                                <option key={cl.id} value={cl.id}>
+                                    {cl.name}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+
+                    <Button variant="primary" type="submit" className="w-100">
+                        {selectedProduct ? "Actualizar Producto" : "Agregar Producto"}
+                    </Button>
+                </Form>
+                <Container className="mt-3">
+                    <Button variant="warning" onClick={handleNavigate} className="mb-4 w-100">
+                        Gestionar Marcas y Clases
+                    </Button> 
+                </Container>
+            </Card.Body>
+        </Card>
     );
 }
