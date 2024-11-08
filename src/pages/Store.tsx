@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 
 
-
 type Product = {
     id: string;
     nombre: string;
@@ -24,6 +23,8 @@ type Product = {
     imgUrl: string;
 };
 
+
+
 export function Store() {
     const [products, setProducts] = useState<Product[]>([]);
 
@@ -37,16 +38,19 @@ export function Store() {
         fetchProducts();
     }, []);
 
+    
+    
+    
     return (
-        <>
-            <h1>Store</h1>
-            <Row md={2} xs={1} lg={3} className="g-3">
-                {products.map(product => (
+      <>
+        <h1>Store</h1>
+        <Row md={2} xs={1} lg={3} className="g-3">
+        {products.map(product => (
                     <Col key={product.id}>
                         <StoreItem {...product} />
-                    </Col>
-                ))}
-            </Row>
-        </>
-    );
-}
+            </Col>
+          ))}
+        </Row>
+      </>
+    )
+  }

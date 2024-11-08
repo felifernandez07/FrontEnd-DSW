@@ -1,0 +1,44 @@
+
+
+  .home-page {
+    background-color: #f9f9f9;
+  }
+  
+  .home-title {
+    font-size: 2.5rem;
+    color: #4a4a4a;
+  }
+  
+  .home-lead {
+    font-size: 1.2rem;
+    color: #7a7a7a;
+  }
+  
+  .home-subtitle {
+    font-size: 1.8rem;
+    color: #333;
+  }
+  
+  .home-description {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+  }
+  
+  .home-img {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .home-card {
+    background-color: #ffffff;
+    border: none;
+    padding: 20px;
+  }
+  
+  .home-icon {
+    color: #007bff;
+  }
+
+ 
+  
