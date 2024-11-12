@@ -1,14 +1,44 @@
-import { Button, Container, Nav, Navbar as NavbarBs } from "react-bootstrap";
+import { Button, Container, Nav, Navbar as NavbarBs, Form, FormControl } from "react-bootstrap";
 import { NavLink, useLocation } from "react-router-dom";
 import { useShoppingCart } from "../context/ShoppingCartContext.tsx";
+import { Link } from 'react-router-dom'
+import { useState } from "react";
 
-export function Navbar() {
+
+const Navbar = () => {
     const { openCart, cartQuantity } = useShoppingCart();
     const location = useLocation(); // Hook para obtener la ruta actual
+    const [searchQuery, setSearchQuery] = useState(""); // Estado para el valor de búsqueda
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery((e.target as HTMLInputElement).value);
+    };
+
+    const handleSearchSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("Buscar:", searchQuery);
+        //redirigir o realizar acciones según el valor de `searchQuery`
+
+        // Realiza la búsqueda de productos
+        if (searchQuery.trim()) {
+            // Redirige a la página de tienda con el término de búsqueda
+            window.location.href = `/store?search=${encodeURIComponent(searchQuery)}`;
+        }
+    };
 
     return (
         <NavbarBs sticky="top" className="bg-white shadow-sm mb-3">
             <Container>
+
+                <div>
+                    <Link to ="/"> <img 
+        src={"../imgs/logo.jpeg"} 
+        alt="Don Julio" 
+        style={{ width: '100px', cursor: 'pointer' }} 
+      /> </Link>
+                </div>
+
+
                 <Nav className="me-auto">
                     <Nav.Link to="/" as={NavLink}>
                         Home
@@ -20,6 +50,22 @@ export function Navbar() {
                         About
                     </Nav.Link>
                 </Nav>
+
+                {/* Barra de búsqueda solo en /store */}
+                  {/*  location.pathname === "/store" && (
+                <Form className="d-flex me-auto" onSubmit={handleSearchSubmit}>
+                    <FormControl
+                        type="search"
+                        placeholder="Buscar productos"
+                        className="me-2"
+                        aria-label="Search"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
+                    <Button variant="outline-success" type="submit">Buscar</Button>
+                </Form>
+                )*/}
+
 
                 {/* Mostrar el logo del carrito solo en la ruta /store */}
                 {location.pathname === "/store" && (
@@ -55,3 +101,5 @@ export function Navbar() {
         </NavbarBs>
     );
 }
+
+export default Navbar

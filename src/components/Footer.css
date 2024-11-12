@@ -1,0 +1,67 @@
+.footer-container {
+    background-color: #333;
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .footer-content p {
+    margin: 5px 0;
+  }
+  
+  .newsletter {
+    margin-top: 30px;
+  }
+  
+  .newsletter h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .newsletter form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .newsletter input[type="email"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1rem;
+  }
+  
+  .newsletter button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    background-color: #ff7f50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .newsletter button:hover {
+    background-color: #ff6347;
+  }
+  
+  .subscription-message {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #ff6347;
+    font-weight: bold;
+  }
+  

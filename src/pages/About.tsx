@@ -2,10 +2,12 @@ import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import "./About.css";
+import Map from "../components/map.tsx"
 
 export function About() {
 
-  const title = "Sobre Don Julio";
+const title = "Sobre Don Julio";
+  const title2 = "Nuestra Ubicacion:"
   const leadText = "Don Julio no es solo una tienda de café, es una experiencia. Ahora también puedes disfrutar de nuestros productos en línea, desde la comodidad de tu hogar.";
   const history = "Fundada en el corazón de la región cafetera, Don Julio surge de una pasión profunda por el café auténtico y sostenible. Trabajamos con agricultores locales que comparten nuestros valores para ofrecerte un café excepcional.";
   const values = "En Don Julio, creemos en el respeto, la sostenibilidad y en apoyar a las comunidades locales. Cada compra en línea respalda nuestro compromiso con el comercio justo y el desarrollo sostenible.";
@@ -33,6 +35,12 @@ export function About() {
           <p className="about-description">{values}</p>
         </Col>
       </Row>
+
+      <Row>
+      <h2 className="about-title2" >{title2}</h2>
+          <Map />
+      </Row>
+
       <Row className="text-center mt-5">
         <Col>
           <Card className="about-card shadow-lg">
@@ -43,10 +51,10 @@ export function About() {
                 promociones y eventos. ¡Sé parte de la familia Don Julio!
               </Card.Text>
               <div className="social-icons">
-                <Button variant="link" href="https://facebook.com" target="_blank">
+                <Button variant="link" href="https://www.facebook.com/tostaderodecafe" target="_blank">
                   <FaFacebook size={24} className="social-icon" />
                 </Button>
-                <Button variant="link" href="https://instagram.com" target="_blank">
+                <Button variant="link" href="https://www.instagram.com/tostaderodecafe/" target="_blank">
                   <FaInstagram size={24} className="social-icon" />
                 </Button>
                 <Button variant="link" href="https://twitter.com" target="_blank">

@@ -1,0 +1,62 @@
+.carousel-container {
+    position: relative;
+    max-width: 2000px; /* Ancho máximo del carrusel */
+    margin: 0 auto; /* Centrado */
+    margin-bottom: 40px; /* Espacio adicional hacia abajo */
+    border-radius: 15px; /* Bordes redondeados para el contenedor */
+    overflow: hidden; /* Asegura que las imágenes no se desborden */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  }
+  
+  .carousel-wrapper {
+    position: relative;
+  }
+  
+  .carousel-image {
+    width: 100%;
+    height: 400px; /* Altura de imagen más grande para mayor impacto */
+    object-fit: cover; /* Asegura que la imagen cubra completamente el área */
+    border-radius: 10px; /* Bordes redondeados para las imágenes */
+    transition: transform 0.3s ease-in-out; /* Transición suave en el movimiento */
+  }
+  
+  .carousel-image:hover {
+    transform: scale(1.05); /* Efecto de zoom suave al pasar el cursor */
+  }
+  
+  .carousel-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+  }
+  
+  .carousel-controls button {
+    background: rgba(255, 255, 255, 0.7); /* Fondo translúcido */
+    color: #333;
+    border: none;
+    font-size: 2rem;
+    padding: 12px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+    transition: background 0.3s ease, transform 0.3s ease; /* Suaviza el efecto de hover */
+  }
+  
+  .carousel-controls .prev {
+    left: -30px; /* Coloca el botón izquierdo fuera de la imagen */
+  }
+  
+  .carousel-controls .next {
+    right: -30px; /* Coloca el botón derecho fuera de la imagen */
+  }
+  
+  .carousel-controls button:hover {
+    background: rgba(0, 0, 0, 0.8); /* Cambio de color al pasar el cursor */
+    transform: scale(1.1); /* Efecto de ampliación al hacer hover */
+  }
+  
+  .carousel-controls button:focus {
+    outline: none; /* Elimina el borde al hacer foco */
+  }
