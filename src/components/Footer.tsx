@@ -1,22 +1,40 @@
-import React, {useState} from "react";
-import { Container, Row, Col, Button, Form} from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import "./Footer.css"; // Si deseas agregar estilos adicionales
 
 const Footer = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      // Lógica para enviar el correo a una API o servicio de suscripción
-      setMessage('¡Gracias por suscribirte!');
-      setEmail('');
-  } else {
-      setMessage('Por favor, ingresa un correo electrónico válido.');
-  }
-};
+
+    if (!email) {
+      setMessage("Por favor, ingresa un correo válido.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        setMessage("¡Gracias por suscribirte! Revisa tu correo.");
+        setEmail("");
+      } else {
+        setMessage("Error al enviar el correo.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Error de conexión con el servidor.");
+    }
+  };
 
   return (
     <footer className="footer-container">
@@ -50,26 +68,26 @@ const Footer = () => {
         </Row>
 
         <Row>
-          <Col md={20} className=" text-center text-md-right">
-        <div className="newsletter">
-                    <h3>Suscríbete a nuestro newsletter</h3>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group controlId="email">
-                            <Form.Control
-                                type="email"
-                                placeholder="Ingresa tu e-mail"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </Form.Group>
-                        <Button variant="primary" type="submit">
-                            Suscribirse
-                        </Button>
-                    </Form>
-                    {message && <p className="subscription-message">{message}</p>}
-                </div>
-                </Col>
+          <Col md={20} className="text-center text-md-right">
+            <div className="newsletter">
+              <h3>Suscríbete a nuestro newsletter</h3>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="email">
+                  <Form.Control
+                    type="email"
+                    placeholder="Ingresa tu e-mail"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit">
+                  Suscribirse
+                </Button>
+              </Form>
+              {message && <p className="subscription-message">{message}</p>}
+            </div>
+          </Col>
         </Row>
       </Container>
     </footer>
