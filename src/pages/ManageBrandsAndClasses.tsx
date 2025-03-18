@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Card, ListGroup, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Card, ListGroup, Button, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import { AddBrandForm } from "../components/AddBrandForm";
 import { AddClassForm } from "../components/AddClassForm";
 import { ScrollToTopButton } from "../components/ScrollToTopButton.tsx";
-import {AutoScroll} from "../components/AutoScroll.tsx";
+import { AutoScroll } from "../components/AutoScroll.tsx";
+
 interface Brand {
     id: string;
     nombre: string;
@@ -24,6 +25,10 @@ export function ManageBrandsAndClasses() {
     const [editingClass, setEditingClass] = useState<string | null>(null);
     const [brandEdits, setBrandEdits] = useState({ nombre: "", descripcion: "" });
     const [classEdits, setClassEdits] = useState({ name: "", description: "" });
+
+    // Estado para la confirmación de eliminación
+    const [selectedItem, setSelectedItem] = useState<{ id: string; name: string; type: "brand" | "class" } | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
         fetchBrands();
@@ -58,39 +63,61 @@ export function ManageBrandsAndClasses() {
         setClassEdits({ name: cl.name, description: cl.description });
     };
 
-const saveBrandEdit = async (brandId: string) => {
-    try {
-        await axios.put(`http://localhost:3000/api/product/brands/${brandId}`, brandEdits);
-        setBrands(prev =>
-            prev.map(brand => (brand.id === brandId ? { ...brand, ...brandEdits } : brand))
-        );
-        setEditingBrand(null);
-    } catch (error) {
-        console.error("Error al guardar la edición de la marca", error);
-    }
-};
+    const saveBrandEdit = async (brandId: string) => {
+        try {
+            await axios.put(`http://localhost:3000/api/product/brands/${brandId}`, brandEdits);
+            setBrands(prev =>
+                prev.map(brand => (brand.id === brandId ? { ...brand, ...brandEdits } : brand))
+            );
+            setEditingBrand(null);
+        } catch (error) {
+            console.error("Error al guardar la edición de la marca", error);
+        }
+    };
 
+    const saveClassEdit = async (classId: string) => {
+        try {
+            await axios.put(`http://localhost:3000/api/product/classes/${classId}`, classEdits);
+            setClasses(prev =>
+                prev.map(cl => (cl.id === classId ? { ...cl, ...classEdits } : cl))
+            );
+            setEditingClass(null);
+        } catch (error) {
+            console.error("Error al guardar la edición de la clase", error);
+        }
+    };
 
-const saveClassEdit = async (classId: string) => {
-    try {
-        await axios.put(`http://localhost:3000/api/product/classes/${classId}`, classEdits);
-        setClasses(prev =>
-            prev.map(cl => (cl.id === classId ? { ...cl, ...classEdits } : cl))
-        );
-        setEditingClass(null);
-    } catch (error) {
-        console.error("Error al guardar la edición de la clase", error);
-    }
-};
+    // Confirmar eliminación
+    const confirmDelete = (id: string, name: string, type: "brand" | "class") => {
+        setSelectedItem({ id, name, type });
+        setShowDeleteModal(true);
+    };
+
+    // Ejecutar eliminación
+    const handleDelete = async () => {
+        if (selectedItem) {
+            try {
+                if (selectedItem.type === "brand") {
+                    await axios.delete(`http://localhost:3000/api/product/brands/${selectedItem.id}`);
+                    setBrands(prev => prev.filter(brand => brand.id !== selectedItem.id));
+                } else {
+                    await axios.delete(`http://localhost:3000/api/product/classes/${selectedItem.id}`);
+                    setClasses(prev => prev.filter(cl => cl.id !== selectedItem.id));
+                }
+            } catch (error) {
+                console.error("Error al eliminar", error);
+            } finally {
+                setShowDeleteModal(false);
+                setSelectedItem(null);
+            }
+        }
+    };
 
     return (
         <Container className="my-5">
             <h2 className="text-center mb-4">Gestión de Marcas y Clases</h2>
 
-           
             <AutoScroll targetId="edit-brand-form" trigger={editingBrand} offset={150} />
-
-          
             <AutoScroll targetId="edit-class-form" trigger={editingClass} offset={150} />
 
             <Row>
@@ -98,7 +125,7 @@ const saveClassEdit = async (classId: string) => {
                     <Card className="mb-4">
                         <Card.Body>
                             <Card.Title className="text-center">Agregar Nueva Marca</Card.Title>
-                            <AddBrandForm onBrandAdded={() => fetchBrands()} />
+                            <AddBrandForm onBrandAdded={fetchBrands} />
                         </Card.Body>
                     </Card>
                     <h4 className="mt-4">Marcas Existentes</h4>
@@ -111,27 +138,25 @@ const saveClassEdit = async (classId: string) => {
                                             value={brandEdits.nombre}
                                             onChange={(e) => setBrandEdits(prev => ({ ...prev, nombre: e.target.value }))}
                                             placeholder="Nombre de la Marca"
-                                            className="mb-2"
                                         />
                                         <Form.Control
                                             value={brandEdits.descripcion}
                                             onChange={(e) => setBrandEdits(prev => ({ ...prev, descripcion: e.target.value }))}
-                                            placeholder="Descripción"
-                                            className="mb-2"
+                                            placeholder="Descripción de la Marca"
                                         />
-                                    <div>
-                                            <Button variant="success" onClick={() => saveBrandEdit(brand.id)} className="me-2">Guardar</Button>
-                                            <Button variant="secondary" onClick={() => setEditingBrand(null)}>Cancelar</Button>
+                                        <div className="d-flex gap-2">
+                                        <Button variant="success" onClick={() => saveBrandEdit(brand.id)}>Guardar</Button>
+                                        <Button variant="secondary" onClick={() => setEditingBrand(null)}>Cancelar</Button>
                                         </div>
                                     </div>
                                 ) : (
                                     <>
                                         <span>{brand.nombre}</span>
-                                        <div>
-                                            <Button variant="warning" className="ms-2" onClick={() => startEditingBrand(brand)}>Editar</Button>
-                                            <Button variant="danger" className="ms-2" onClick={() => console.log("Eliminar")}>Eliminar</Button>
+                                        <div className="d-flex gap-2">
+                                            <Button variant="warning" onClick={() => startEditingBrand(brand)}>Editar</Button>
+                                            <Button variant="danger" onClick={() => confirmDelete(brand.id, brand.nombre, "brand")}>Eliminar</Button>
                                         </div>
-                                    </>     
+                                    </>
                                 )}
                             </ListGroup.Item>
                         ))}
@@ -142,7 +167,7 @@ const saveClassEdit = async (classId: string) => {
                     <Card className="mb-4">
                         <Card.Body>
                             <Card.Title className="text-center">Agregar Nueva Clase</Card.Title>
-                            <AddClassForm onClassAdded={() => fetchClasses()} />
+                            <AddClassForm onClassAdded={fetchClasses} />
                         </Card.Body>
                     </Card>
                     <h4 className="mt-4">Clases Existentes</h4>
@@ -155,33 +180,44 @@ const saveClassEdit = async (classId: string) => {
                                             value={classEdits.name}
                                             onChange={(e) => setClassEdits(prev => ({ ...prev, name: e.target.value }))}
                                             placeholder="Nombre de la Clase"
-                                            className="mb-2"
                                         />
                                         <Form.Control
                                             value={classEdits.description}
                                             onChange={(e) => setClassEdits(prev => ({ ...prev, description: e.target.value }))}
-                                            placeholder="Descripción"
-                                            className="mb-2"
+                                            placeholder="Descripción de la Clase"
                                         />
-                                    <div>
-                                        <Button variant="success" onClick={() => saveClassEdit(cl.id)} className="me-2">Guardar</Button>
+                                    <div className="d-flex gap-2">
+                                        <Button variant="success" onClick={() => saveClassEdit(cl.id)}>Guardar</Button>
                                         <Button variant="secondary" onClick={() => setEditingClass(null)}>Cancelar</Button>
                                     </div>
                                 </div>
                             ) : (
                                 <>
                                     <span>{cl.name}</span>
-                                    <div>
-                                        <Button variant="warning" className="ms-2" onClick={() => startEditingClass(cl)}>Editar</Button>
-                                        <Button variant="danger" className="ms-2" onClick={() => console.log("Eliminar")}>Eliminar</Button>
+                                    <div className="d-flex gap-2">
+                                        <Button variant="warning" onClick={() => startEditingClass(cl)}>Editar</Button>
+                                        <Button variant="danger" onClick={() => confirmDelete(cl.id, cl.name, "class")}>Eliminar</Button>
                                     </div>
                                 </>
-                                )}
+                            )}
                             </ListGroup.Item>
                         ))}
                     </ListGroup>
                 </Col>
             </Row>
+
+            {/* Modal de Confirmación */}
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Eliminación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Estás seguro de que quieres eliminar <strong>{selectedItem?.name}</strong>?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</Button>
+                    <Button variant="danger" onClick={handleDelete}>Eliminar</Button>
+                </Modal.Footer>
+            </Modal>
+
             <ScrollToTopButton />
         </Container>
     );
