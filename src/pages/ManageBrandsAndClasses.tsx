@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Card, ListGroup, Button, Form } from "react-bootstrap";
 import axios from "axios";
 import { AddBrandForm } from "../components/AddBrandForm";
@@ -48,17 +48,40 @@ export function ManageBrandsAndClasses() {
         }
     };
 
-    // Activar edición de marca con autoscroll
     const startEditingBrand = (brand: Brand) => {
         setEditingBrand(brand.id);
         setBrandEdits({ nombre: brand.nombre, descripcion: brand.descripcion });
     };
 
-    // Activar edición de clase con autoscroll
     const startEditingClass = (cl: Class) => {
         setEditingClass(cl.id);
         setClassEdits({ name: cl.name, description: cl.description });
     };
+
+const saveBrandEdit = async (brandId: string) => {
+    try {
+        await axios.put(`http://localhost:3000/api/product/brands/${brandId}`, brandEdits);
+        setBrands(prev =>
+            prev.map(brand => (brand.id === brandId ? { ...brand, ...brandEdits } : brand))
+        );
+        setEditingBrand(null);
+    } catch (error) {
+        console.error("Error al guardar la edición de la marca", error);
+    }
+};
+
+
+const saveClassEdit = async (classId: string) => {
+    try {
+        await axios.put(`http://localhost:3000/api/product/classes/${classId}`, classEdits);
+        setClasses(prev =>
+            prev.map(cl => (cl.id === classId ? { ...cl, ...classEdits } : cl))
+        );
+        setEditingClass(null);
+    } catch (error) {
+        console.error("Error al guardar la edición de la clase", error);
+    }
+};
 
     return (
         <Container className="my-5">
@@ -96,8 +119,8 @@ export function ManageBrandsAndClasses() {
                                             placeholder="Descripción"
                                             className="mb-2"
                                         />
-                                        <div>
-                                            <Button variant="success" onClick={() => setEditingBrand(null)} className="me-2">Guardar</Button>
+                                    <div>
+                                            <Button variant="success" onClick={() => saveBrandEdit(brand.id)} className="me-2">Guardar</Button>
                                             <Button variant="secondary" onClick={() => setEditingBrand(null)}>Cancelar</Button>
                                         </div>
                                     </div>
@@ -108,7 +131,7 @@ export function ManageBrandsAndClasses() {
                                             <Button variant="warning" className="ms-2" onClick={() => startEditingBrand(brand)}>Editar</Button>
                                             <Button variant="danger" className="ms-2" onClick={() => console.log("Eliminar")}>Eliminar</Button>
                                         </div>
-                                    </>
+                                    </>     
                                 )}
                             </ListGroup.Item>
                         ))}
@@ -140,27 +163,25 @@ export function ManageBrandsAndClasses() {
                                             placeholder="Descripción"
                                             className="mb-2"
                                         />
-                                        <div>
-                                            <Button variant="success" onClick={() => setEditingClass(null)} className="me-2">Guardar</Button>
-                                            <Button variant="secondary" onClick={() => setEditingClass(null)}>Cancelar</Button>
-                                        </div>
+                                    <div>
+                                        <Button variant="success" onClick={() => saveClassEdit(cl.id)} className="me-2">Guardar</Button>
+                                        <Button variant="secondary" onClick={() => setEditingClass(null)}>Cancelar</Button>
                                     </div>
-                                ) : (
-                                    <>
-                                        <span>{cl.name}</span>
-                                        <div>
-                                            <Button variant="warning" className="ms-2" onClick={() => startEditingClass(cl)}>Editar</Button>
-                                            <Button variant="danger" className="ms-2" onClick={() => console.log("Eliminar")}>Eliminar</Button>
-                                        </div>
-                                    </>
+                                </div>
+                            ) : (
+                                <>
+                                    <span>{cl.name}</span>
+                                    <div>
+                                        <Button variant="warning" className="ms-2" onClick={() => startEditingClass(cl)}>Editar</Button>
+                                        <Button variant="danger" className="ms-2" onClick={() => console.log("Eliminar")}>Eliminar</Button>
+                                    </div>
+                                </>
                                 )}
                             </ListGroup.Item>
                         ))}
                     </ListGroup>
                 </Col>
             </Row>
-
-            {/* Botón flotante para volver arriba */}
             <ScrollToTopButton />
         </Container>
     );
