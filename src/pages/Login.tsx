@@ -10,7 +10,7 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+  
     try {
       const res = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
@@ -19,18 +19,35 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password }),
       })
-
+  
       const data = await res.json()
-
+  
       if (!res.ok) {
         setError(data.message || 'Error al iniciar sesión')
         return
       }
-
-      // Guardar el token
+  
+      // ✅ Guardar token
       localStorage.setItem('token', data.token)
-
-      // Redirigir al home o store
+  
+      // ✅ Obtener perfil del usuario con el token
+      const meRes = await fetch('http://localhost:3000/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      })
+  
+      const meData = await meRes.json()
+  
+      if (!meRes.ok) {
+        setError('No se pudo obtener el perfil del usuario')
+        return
+      }
+  
+      // ✅ Guardar usuario en localStorage
+      localStorage.setItem('user', JSON.stringify(meData.user))
+  
+      // ✅ Redirigir
       navigate('/store')
     } catch (err) {
       console.error(err)
@@ -67,6 +84,10 @@ const Login = () => {
           Entrar
         </button>
       </form>
+      <div style={{ marginTop: 20, textAlign: 'center' }}>
+        <span>¿No tenés cuenta?</span>{' '}
+        <a href="/register">Registrate acá</a>
+      </div>
     </div>
   )
 }

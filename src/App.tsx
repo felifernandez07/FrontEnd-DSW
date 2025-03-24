@@ -5,27 +5,33 @@ import { Store } from "./pages/Store"
 import { About } from "./pages/About"
 import Login from './pages/Login'
 import Register from './pages/Register'
-import  Navbar  from "./components/Navbar"
+import Navbar from "./components/Navbar"
+import Personal from "./pages/Personal"
 import { ShoppingCartProvider } from "./context/ShoppingCartContext.tsx"
+import PrivateRoute from "./components/PrivateRoutes.tsx"
 
 function App() {
   return (
     <ShoppingCartProvider>
-  <Navbar />
-  <Container className="mb-4"> 
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/store" element={<Store />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-    </Routes>
+      <Navbar />
+      <Container className="mb-4"> 
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/personal" element={<Personal />} />
 
-  </Container>
-  
-  </ShoppingCartProvider>
-  );
+          {/* ✅ Ruta protegida */}
+          <Route path="/store" element={
+            <PrivateRoute>
+              <Store />
+            </PrivateRoute>
+          } />
+        </Routes>
+      </Container>
+    </ShoppingCartProvider>
+  )
 }
-
 
 export default App
