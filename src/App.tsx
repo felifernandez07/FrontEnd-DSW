@@ -8,7 +8,6 @@ import Register from './pages/Register'
 import Navbar from "./components/Navbar"
 import Personal from "./pages/Personal"
 import { ShoppingCartProvider } from "./context/ShoppingCartContext.tsx"
-import PrivateRoute from "./components/PrivateRoutes.tsx"
 
 function App() {
   return (
@@ -21,13 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/personal" element={<Personal />} />
-
-          {/* ✅ Ruta protegida */}
-          <Route path="/store" element={
-            <PrivateRoute>
-              <Store />
-            </PrivateRoute>
-          } />
+          <Route path="/store" element={<Store />} />
         </Routes>
       </Container>
     </ShoppingCartProvider>
