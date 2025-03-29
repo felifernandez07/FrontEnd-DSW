@@ -18,10 +18,18 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [user, setUser] = useState<User | null>(null)
 
+  // Escuchar cambios en localStorage (como login o logout)
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    const updateUserFromStorage = () => {
+      const storedUser = localStorage.getItem("user")
+      setUser(storedUser ? JSON.parse(storedUser) : null)
+    }
+
+    updateUserFromStorage()
+    window.addEventListener("storage", updateUserFromStorage)
+
+    return () => {
+      window.removeEventListener("storage", updateUserFromStorage)
     }
   }, [])
 
