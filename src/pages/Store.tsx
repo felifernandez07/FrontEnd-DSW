@@ -3,6 +3,13 @@ import { StoreItem } from "../components/StoreItem.tsx"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useSearchParams } from "react-router-dom"
+import Slider from "rc-slider"
+import 'rc-slider/assets/index.css'
+
+import type { SliderProps } from "rc-slider"
+
+
+
 
 type Product = {
   id: string;
@@ -20,78 +27,142 @@ type Product = {
     name: string;
     description: string;
   };
+  category?: {
+    id: string;
+    nombre: string;
+  };
   imgUrl: string;
 };
 
 export function Store() {
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<{ id: string; nombre: string }[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [priceOrder, setPriceOrder] = useState<'asc' | 'desc' | ''>('')
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000])
 
-  // Leer parámetro de búsqueda desde la URL
   const [searchParams] = useSearchParams()
   const initialSearch = searchParams.get("search") || ""
   const [searchTerm, setSearchTerm] = useState(initialSearch)
 
   const fetchProducts = async () => {
     const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`)
-    const data = response.data.data
-    setProducts(data)
+    setProducts(response.data.data)
+  }
+
+  const fetchCategories = async () => {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`)
+    setCategories(response.data.data)
   }
 
   useEffect(() => {
     fetchProducts()
+    fetchCategories()
   }, [])
 
-  console.log("Buscando:", searchTerm)
-  
-  // Filtrar productos por nombre
-  const filteredProducts = products.filter(product => {
+  let filteredProducts = products.filter(product => {
     const nombre = product.nombre?.toLowerCase() || ''
     const marca = product.productBrand?.nombre?.toLowerCase() || ''
     const clase = product.productClass?.name?.toLowerCase() || ''
+    const categoriaId = product.category?.id || ''
+    const precio = parseFloat(product.precio)
     const search = searchTerm.toLowerCase()
-  
-    return (
+
+    const coincideBusqueda =
       nombre.includes(search) ||
       marca.includes(search) ||
       clase.includes(search)
-    )
-  })
-  
-  
 
-  
-    return (
-      <>
-        <h1>Store</h1>
-    
-        {/* Botón para limpiar búsqueda */}
-        {searchTerm && (
+    const coincideCategoria =
+      !selectedCategory || categoriaId === selectedCategory
+
+    const dentroDeRango =
+      precio >= priceRange[0] && precio <= priceRange[1]
+
+    return coincideBusqueda && coincideCategoria && dentroDeRango
+  })
+
+  if (priceOrder === 'asc') {
+    filteredProducts = filteredProducts.sort((a, b) => parseFloat(a.precio) - parseFloat(b.precio))
+  } else if (priceOrder === 'desc') {
+    filteredProducts = filteredProducts.sort((a, b) => parseFloat(b.precio) - parseFloat(a.precio))
+  }
+
+  return (
+    <>
+      <h1>Store</h1>
+
+      {searchTerm && (
+        <button
+          className="btn btn-outline-secondary mb-3"
+          onClick={() => {
+            setSearchTerm('');
+            window.history.replaceState({}, '', '/store');
+          }}
+        >
+          Limpiar búsqueda
+        </button>
+      )}
+
+      <div className="mb-3 d-flex flex-wrap gap-2">
+        {categories.map(category => (
           <button
-            className="btn btn-outline-secondary mb-3"
-            onClick={() => {
-              setSearchTerm('');
-              window.history.replaceState({}, '', '/store'); // limpia la URL
-            }}
+            key={category.id}
+            className={`btn ${selectedCategory === category.id ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() =>
+              setSelectedCategory(prev => prev === category.id ? null : category.id)
+            }
           >
-            Limpiar búsqueda
+            {category.nombre}
           </button>
-        )}
-    
-        <Row md={2} xs={1} lg={3} className="g-3">
-          {filteredProducts.map(product => (
-            <Col key={product.id}>
-              <StoreItem {...product} />
-            </Col>
-          ))}
-        </Row>
-    
-        {/* Pop-up si no hay resultados */}
-        {filteredProducts.length === 0 && (
-          <div className="alert alert-warning mt-4" role="alert">
-            No se encontraron productos que coincidan con tu búsqueda.
+        ))}
+      </div>
+
+      <div className="d-flex flex-wrap gap-4 mb-4 align-items-center">
+        <div style={{ minWidth: 300 }}>
+          <label className="form-label">Filtrar por precio</label>
+          <Slider
+            range
+            min={0}
+            max={30000}
+            step={100}
+            defaultValue={priceRange}
+            onChange={(value) => setPriceRange(value as [number, number])}
+            marks={{ 0: '$0', 30000: '$30k' }}
+          />
+          <div className="mt-4">
+            <small>Desde: ${priceRange[0]} — Hasta: ${priceRange[1]}</small>
           </div>
-        )}
-      </>
-    )
-  
+        </div>
+
+        <div>
+          <label htmlFor="order" className="form-label">Ordenar por precio</label>
+          <select
+            id="order"
+            className="form-select"
+            value={priceOrder}
+            onChange={(e) => setPriceOrder(e.target.value as 'asc' | 'desc' | '')}
+          >
+            <option value="">Sin orden</option>
+            <option value="asc">Menor a mayor</option>
+            <option value="desc">Mayor a menor</option>
+          </select>
+        </div>
+      </div>
+
+      <Row md={2} xs={1} lg={3} className="g-3">
+        {filteredProducts.map(product => (
+          <Col key={product.id}>
+            <StoreItem {...product} />
+          </Col>
+        ))}
+      </Row>
+
+      {filteredProducts.length === 0 && (
+        <div className="alert alert-warning mt-4" role="alert">
+          No se encontraron productos que coincidan con los filtros seleccionados.
+        </div>
+      )}
+    </>
+  )
 }
