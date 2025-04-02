@@ -1,8 +1,9 @@
-import { Col, Row, Container, Button } from "react-bootstrap";
+import { Col, Row, Container, Button, Modal } from "react-bootstrap";
 import { StoreAdmin } from "../components/StoreAdmin";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { AddProductForm } from "../components/AddProductForm";
+import { ScrollToTopButton } from "../components/ScrollToTopButton"; // Asegúrate de que este componente exista
 
 type Product = {
   id: string;
@@ -21,6 +22,8 @@ export function StoreAdm() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const limit = 8;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; nombre: string } | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -37,11 +40,24 @@ export function StoreAdm() {
     }
   };
 
-  const deleteProduct = async (id: string) => {
-    await axios.delete(`http://localhost:3000/api/products/${id}`);
-    // Reiniciar desde la primera página, sin llamar directamente a fetchProducts
-    setPage(1);
-    setProducts([]);
+  const confirmDelete = (id: string, name: string) => {
+    setItemToDelete({ id, name });
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    if (itemToDelete?.id) {
+      try {
+        await axios.delete(`http://localhost:3000/api/products/${itemToDelete.id}`);
+        setPage(1);
+        setProducts([]);
+        setShowDeleteModal(false);
+        setItemToDelete(null);
+      } catch (error) {
+        console.error("Error al eliminar el producto:", error);
+        // Aquí podrías agregar alguna notificación al usuario sobre el error
+      }
+    }
   };
 
   const handleEdit = (product: Product) => {
@@ -54,7 +70,7 @@ export function StoreAdm() {
   }, [page]);
 
   return (
-    <>
+    <Container>
       <h1>Store</h1>
       <Row md={2} xs={1} lg={3} className="g-3">
         {products.map((product) => (
@@ -62,7 +78,7 @@ export function StoreAdm() {
             <StoreAdmin
               {...product}
               onEdit={() => handleEdit(product)}
-              onDelete={() => deleteProduct(product.id)}
+              onDelete={() => confirmDelete(product.id, product.nombre)}
             />
           </Col>
         ))}
@@ -70,7 +86,7 @@ export function StoreAdm() {
 
       {hasMore && (
         <div className="text-center mt-4">
-          <Button onClick={() => setPage((prev) => prev + 1)}>Ver productos</Button>
+          <Button onClick={() => setPage((prev) => prev + 1)}>Ver más</Button>
         </div>
       )}
 
@@ -84,6 +100,25 @@ export function StoreAdm() {
           setSelectedProduct={setSelectedProduct}
         />
       </Container>
-    </>
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que quieres eliminar <strong>{itemToDelete?.nombre || ''}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <ScrollToTopButton />
+    </Container>
   );
 }
