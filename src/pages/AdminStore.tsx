@@ -41,7 +41,7 @@ export function StoreAdm() {
   };
 
   const confirmDelete = (id: string, name: string) => {
-    setItemToDelete({ id, name });
+    setItemToDelete({ id, nombre: name });
     setShowDeleteModal(true);
   };
 
