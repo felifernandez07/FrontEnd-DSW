@@ -7,9 +7,10 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Navbar from "./components/Navbar"
 import Personal from "./pages/Personal"
-import { ManageBrandsAndClasses } from "./pages/manage"
+import { ManageBrandsAndClasses } from "./pages/Manage"
 import Unauthorized  from "./pages/UnAuthorized"
 import { ShoppingCartProvider } from "./context/ShoppingCartContext.tsx"
+import {StoreAdm} from "./pages/AdminStore" 
 
 function AdminOnlyRoute({ children }: { children: JSX.Element }) {
   const user = JSON.parse(localStorage.getItem("user") || "null")
@@ -31,6 +32,14 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/personal" element={<Personal />} />
           <Route path="/store" element={<Store />} />
+          <Route 
+            path="/adm-store"
+            element={
+              <AdminOnlyRoute>
+                <StoreAdm />
+              </AdminOnlyRoute>
+            }
+          />
           <Route 
             path="/manage"
             element={

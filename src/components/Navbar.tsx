@@ -119,7 +119,7 @@ const Navbar = () => {
               <span className="me-2">👋 Hola, {user.name} {user.lastname}</span>
 
               {user.role === "admin" && (
-                <Link to="/manage" className="btn btn-outline-dark btn-sm me-2">
+                <Link to="/adm-store" className="btn btn-outline-dark btn-sm me-2">
                   Panel Admin
                 </Link>
               )}
