@@ -60,22 +60,26 @@ const Login = () => {
       <h2>Iniciar Sesión</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 10 }}>
-          <label>Email</label>
+          <label htmlFor='email'>Email</label>
           <input
+          id='email'
             type="email"
             value={email}
             required
             onChange={e => setEmail(e.target.value)}
+             className='login-input'
             style={{ width: '100%', padding: 8 }}
           />
         </div>
         <div style={{ marginBottom: 10 }}>
-          <label>Contraseña</label>
+          <label htmlFor='password'>Contraseña</label>
           <input
+          id='password'
             type="password"
             value={password}
             required
             onChange={e => setPassword(e.target.value)}
+            className='login-input'
             style={{ width: '100%', padding: 8 }}
           />
         </div>

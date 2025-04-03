@@ -11,6 +11,11 @@ import { ManageBrandsAndClasses } from "./pages/Manage"
 import Unauthorized  from "./pages/UnAuthorized"
 import { ShoppingCartProvider } from "./context/ShoppingCartContext.tsx"
 import {StoreAdm} from "./pages/AdminStore" 
+import { Checkout } from "./pages/Checkout.tsx"
+import { Navigate } from "react-router-dom"
+import { useShoppingCart } from "./context/ShoppingCartContext.tsx"
+import { ProtectedCheckout } from "./components/ProtectedCheckout.tsx"
+import { Success } from "./pages/Success.tsx"
 
 function AdminOnlyRoute({ children }: { children: JSX.Element }) {
   const user = JSON.parse(localStorage.getItem("user") || "null")
@@ -19,6 +24,9 @@ function AdminOnlyRoute({ children }: { children: JSX.Element }) {
   }
   return children
 }
+
+
+
 
 function App() {
   return (
@@ -32,6 +40,17 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/personal" element={<Personal />} />
           <Route path="/store" element={<Store />} />
+          <Route
+                path="/checkout"
+                element={
+                  <ProtectedCheckout>
+                  <Checkout />
+                  </ProtectedCheckout>
+                }
+          />
+
+          <Route path="/success" element={<Success />} />
+
           <Route 
             path="/adm-store"
             element={

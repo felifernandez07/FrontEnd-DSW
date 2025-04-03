@@ -2,6 +2,8 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import axios from "axios";
 import { ShoppingCart } from "../components/ShoppingCart.tsx";
 import { useLocalStorage } from "../hooks/useLocalStorage.ts";
+import { useLocation } from "react-router-dom"
+
 
 type Product = {
     id: string;
@@ -28,6 +30,7 @@ type ShoppingCartContext = {
     increaseCartQuantity: (id: string) => void;
     decreaseCartQuantity: (id: string) => void;
     removeFromCart: (id: string) => void;
+    clearCart: () => void;
     cartQuantity: number;
     cartItems: CartItem[];
     products: Product[];  // Añade productos aquí
@@ -43,6 +46,14 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("shopping-cart", []);
     const [products, setProducts] = useState<Product[]>([]);  // Añade estado para los productos
+    const location = useLocation()
+
+    
+
+        useEffect(() => {
+            setIsOpen(false)
+            }, [location.pathname])
+
 
     const fetchProducts = async () => {
         try {
@@ -102,6 +113,11 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         setCartItems(currItems => currItems.filter(item => item.id !== id));
     }
 
+    function clearCart() {
+        setCartItems([])
+      }
+
+
     return (
         <ShoppingCartContext.Provider
             value={{
@@ -111,6 +127,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
                 removeFromCart,
                 openCart,
                 closeCart,
+                clearCart,
                 cartItems,
                 cartQuantity,
                 products,  // Provee productos en el contexto

@@ -8,9 +8,9 @@ import 'react-phone-input-2/lib/style.css'
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // <React.StrictMode> VOLVER A ACTIVAR!!! 
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+ // </React.StrictMode>
 )
