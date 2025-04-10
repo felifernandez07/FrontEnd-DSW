@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Form, Button, Card, Container } from "react-bootstrap";
+import { API_URL } from "../config/api"; // ajustá la ruta si es necesario
 
 interface AddProductFormProps {
     onProductAdded: () => void;
@@ -48,7 +49,7 @@ export function AddProductForm({ onProductAdded, selectedProduct, setSelectedPro
     useEffect(() => {
         const fetchBrands = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/product/brands");
+                const response = await axios.get(`${API_URL}/api/product/brands`);
                 setBrands(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 console.error("Error al obtener las marcas", error);
@@ -57,7 +58,7 @@ export function AddProductForm({ onProductAdded, selectedProduct, setSelectedPro
 
         const fetchClasses = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/product/classes");
+                const response = await axios.get(`${API_URL}/api/product/classes`);
                 setClasses(Array.isArray(response.data.data) ? response.data.data : []);
             } catch (error) {
                 console.error("Error al obtener las clases", error);
@@ -90,10 +91,10 @@ export function AddProductForm({ onProductAdded, selectedProduct, setSelectedPro
         e.preventDefault();
         try {
             if (selectedProduct) {
-                await axios.put(`http://localhost:3000/api/products/${selectedProduct.id}`, formData);
+                await axios.put(`${API_URL}/api/products/${selectedProduct.id}`, formData);
                 setSelectedProduct(null);
             } else {
-                await axios.post("http://localhost:3000/api/products", formData);
+                await axios.post(`${API_URL}/api/products`, formData);
             }
             onProductAdded();
             setFormData({

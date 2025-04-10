@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Form, Button } from "react-bootstrap";
+import { API_URL } from "../config/api";
 
 interface AddClassFormProps {
     onClassAdded: (newClass: { id: string; name: string; description: string }) => void;
@@ -17,7 +18,7 @@ export function AddClassForm({ onClassAdded }: AddClassFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:3000/api/product/classes", classData);
+            const response = await axios.post(`${API_URL}/api/product/classes`, classData);
             const newClass = response.data.data; // Asumimos que la API devuelve la nueva clase
             onClassAdded(newClass); // Notificar a ManageBrandsAndClasses sobre la nueva clase
             setClassData({ name: "", description: "" });

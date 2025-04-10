@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Form, Button } from "react-bootstrap";
+import { API_URL } from "../config/api";
 
 interface AddBrandFormProps {
     onBrandAdded: (newBrand: { id: string; nombre: string; descripcion: string }) => void;
@@ -17,7 +18,7 @@ export function AddBrandForm({ onBrandAdded }: AddBrandFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:3000/api/product/brands", brandData);
+            const response = await axios.post(`${API_URL}/api/product/brands`, brandData);
             const newBrand = response.data.data; // Asumimos que la API devuelve la nueva marca
             onBrandAdded(newBrand); // Notificar a ManageBrandsAndClasses sobre la nueva marca
             setBrandData({ nombre: "", descripcion: "" });

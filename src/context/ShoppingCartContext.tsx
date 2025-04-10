@@ -3,8 +3,8 @@ import axios from "axios";
 import { ShoppingCart } from "../components/ShoppingCart.tsx";
 import { useLocalStorage } from "../hooks/useLocalStorage.ts";
 import { useLocation } from "react-router-dom"
-
-
+import { API_URL } from "../config/api";
+// const API_URL = "http://localhost:3000";
 type Product = {
     id: string;
     nombre: string;
@@ -57,7 +57,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/api/products');
+            const response = await axios.get (`${API_URL}/products`);
             setProducts(response.data.data);
         } catch (error) {
             console.error("Error fetching products", error);
