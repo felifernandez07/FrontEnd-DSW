@@ -25,3 +25,13 @@ dist-ssr
 
 
 .env
+# Ignorar dependencias
+node_modules/
+.pnpm/
+
+# Ignorar archivos de compilación de TypeScript
+dist/
+*.tsbuildinfo
+
+# Ignorar lockfiles si no querés trackearlos (no siempre recomendable)
+pnpm-lock.yaml
