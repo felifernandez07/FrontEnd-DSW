@@ -57,7 +57,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get (`${API_URL}/products`);
+            const response = await axios.get (`${API_URL}/api/products`);
             setProducts(response.data.data);
         } catch (error) {
             console.error("Error fetching products", error);

@@ -65,9 +65,9 @@ const Navbar = () => {
         </Link>
 
         <Nav className="me-auto">
-          <Nav.Link to="/" as={NavLink}>Home</Nav.Link>
-          <Nav.Link to="/store" as={NavLink}>Store</Nav.Link>
-          <Nav.Link to="/about" as={NavLink}>About</Nav.Link>
+          <Nav.Link to="/" as={NavLink}>Inicio</Nav.Link>
+          <Nav.Link to="/store" as={NavLink}>Tienda</Nav.Link>
+          <Nav.Link to="/about" as={NavLink}>Nosotros</Nav.Link>
         </Nav>
 
         {location.pathname === "/store" && (
