@@ -1,22 +1,24 @@
-
 import { Form, Button, Container, Row, Col, Card, ListGroup } from "react-bootstrap"
 import axios from "axios"
 import { useShoppingCart } from "../context/ShoppingCartContext"
 import { useNavigate } from "react-router-dom"
 import { formatCurrency } from "../utilities/formatCurrency"
-import { useState, useEffect} from "react"
+import { useState, useEffect } from "react"
 
 export function Checkout() {
   const { cartItems, products, clearCart } = useShoppingCart()
   const [name, setName] = useState("")
+  const [dni, setDni] = useState("")
   const [address, setAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [postalCode, setPostalCode] = useState("")
   const [phone, setPhone] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("Tarjeta de crédito")
   const navigate = useNavigate()
 
   useEffect(() => {
     if (cartItems.length === 0) {
-      navigate("/") // redirige al home si no hay productos
+      navigate("/")
     }
   }, [cartItems, navigate])
 
@@ -24,22 +26,24 @@ export function Checkout() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-  
+
     try {
-      const order = { 
-        name, 
-        address, 
-        phone, 
-        paymentMethod, 
-        email: clientEmail, 
-        items: cartItems }
-        
+      const order = {
+        name,
+        dni,
+        address,
+        city,
+        postalCode,
+        phone,
+        paymentMethod,
+        email: clientEmail,
+        items: cartItems
+      }
 
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orders`, order)
 
       localStorage.setItem("lastOrderId", response.data.orderId)
 
-      
       clearCart()
       navigate("/success", {
         state: {
@@ -47,13 +51,10 @@ export function Checkout() {
           paymentMethod: paymentMethod
         }
       })
-      
     } catch (error: any) {
       alert("Error al procesar la orden.")
     }
-    
   }
-  
 
   return (
     <Container className="mt-4">
@@ -61,6 +62,7 @@ export function Checkout() {
       <Row>
         <Col md={7}>
           <Form onSubmit={handleSubmit}>
+            <h5 className="mb-3">🧍 Información del cliente</h5>
             <Form.Group className="mb-3">
               <Form.Label>Nombre completo</Form.Label>
               <Form.Control
@@ -71,12 +73,42 @@ export function Checkout() {
               />
             </Form.Group>
             <Form.Group className="mb-3">
+              <Form.Label>DNI</Form.Label>
+              <Form.Control
+                required
+                value={dni}
+                onChange={e => setDni(e.target.value)}
+                placeholder="Ej: 12345678"
+              />
+            </Form.Group>
+
+            <hr className="my-4" />
+            <h5 className="mb-3">🚚 Datos de envío</h5>
+            <Form.Group className="mb-3">
               <Form.Label>Dirección</Form.Label>
               <Form.Control
                 required
                 value={address}
                 onChange={e => setAddress(e.target.value)}
                 placeholder="Ej: Calle 1234"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Ciudad</Form.Label>
+              <Form.Control
+                required
+                value={city}
+                onChange={e => setCity(e.target.value)}
+                placeholder="Ej: Rosario"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Código Postal</Form.Label>
+              <Form.Control
+                required
+                value={postalCode}
+                onChange={e => setPostalCode(e.target.value)}
+                placeholder="Ej: 2000"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -88,19 +120,28 @@ export function Checkout() {
                 placeholder="Ej: 341 555 5555"
               />
             </Form.Group>
+
+            <hr className="my-4" />
+            <h5 className="mb-3">💳 Método de pago</h5>
             <Form.Group className="mb-4">
-             <Form.Label htmlFor="paymentMethod">Método de pago</Form.Label>
-                <Form.Select
-                    id="paymentMethod"
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    aria-label="Seleccionar método de pago"
-                    >
-    <option>Tarjeta de crédito</option>
-    <option>Transferencia bancaria</option>
-    <option>Pago en efectivo al recibir</option>
-  </Form.Select>
-</Form.Group>
+              <Form.Label htmlFor="paymentMethod">Seleccionar</Form.Label>
+              <Form.Select
+                id="paymentMethod"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                aria-label="Seleccionar método de pago"
+              >
+                <option>Tarjeta de crédito</option>
+                <option>Transferencia bancaria</option>
+                <option>Pago en efectivo al recibir</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Text muted className="mb-3 d-block">
+              📧 El comprobante será enviado a: <strong>{clientEmail}</strong>
+           
+
+            </Form.Text>
 
             <Button variant="success" type="submit">
               Confirmar Pedido

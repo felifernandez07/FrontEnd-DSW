@@ -46,6 +46,9 @@ const Login = () => {
   
       // ✅ Guardar usuario en localStorage
       localStorage.setItem('user', JSON.stringify(meData.user))
+
+      localStorage.setItem('clientEmail', meData.user.email)
+
   
       // ✅ Redirigir
       navigate('/store')

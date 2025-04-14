@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { LoadScript, Autocomplete } from '@react-google-maps/api'
-
-const GOOGLE_API_KEY = 'TU_API_KEY_AQUI' // reemplazá con tu clave de Google Maps
 
 interface ClientClass {
   id: string
@@ -32,7 +29,6 @@ const Register = () => {
   const [clientClasses, setClientClasses] = useState<ClientClass[]>([])
   const [validationError, setValidationError] = useState('')
   const [serverError, setServerError] = useState('')
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
 
   useEffect(() => {
     fetch('http://localhost:3000/api/client/classes')
@@ -47,13 +43,6 @@ const Register = () => {
 
   const handlePhoneChange = (value: string) => {
     setFormData({ ...formData, phone: value })
-  }
-
-  const handlePlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace()
-      setFormData({ ...formData, address: place.formatted_address || '' })
-    }
   }
 
   const validateFields = () => {
@@ -99,11 +88,10 @@ const Register = () => {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <input name="name" placeholder="Nombre" value={formData.name} onChange={handleInputChange} required />
         <input name="lastname" placeholder="Apellido" value={formData.lastname} onChange={handleInputChange} required />
-        <input type="date" name="birthdate" value={formData.birthdate} onChange={handleInputChange} required />
+        <input type="date" placeholder='birthdate' name="birthdate" value={formData.birthdate || ''} onChange={handleInputChange} required />
         <input type="email" name="email" placeholder="Correo electrónico" value={formData.email} onChange={handleInputChange} required />
         <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleInputChange} required />
 
-        {/* Teléfono con código de país */}
         <PhoneInput
           country={'ar'}
           value={formData.phone}
@@ -111,19 +99,12 @@ const Register = () => {
           inputStyle={{ width: '100%' }}
         />
 
-        {/* Dirección con Google Autocomplete */}
-        <LoadScript googleMapsApiKey={GOOGLE_API_KEY} libraries={['places']}>
-          <Autocomplete onLoad={setAutocomplete} onPlaceChanged={handlePlaceChanged}>
-            <input name="address" placeholder="Dirección" value={formData.address} onChange={handleInputChange} required />
-          </Autocomplete>
-        </LoadScript>
-
+        <input name="address" placeholder="Dirección" value={formData.address} onChange={handleInputChange} required />
         <input name="city" placeholder="Ciudad" value={formData.city} onChange={handleInputChange} required />
         <input name="country" placeholder="País" value={formData.country} onChange={handleInputChange} required />
         <input name="postalCode" placeholder="Código Postal" value={formData.postalCode} onChange={handleInputChange} required />
         <input name="dni" placeholder="DNI (6 a 8 dígitos)" value={formData.dni} onChange={handleInputChange} required />
 
-        {/* Select dinámico de clase de cliente */}
         <select name="clientClass" value={formData.clientClass} onChange={handleInputChange} required>
           <option value="">Seleccioná una clase de cliente</option>
           {clientClasses.map((cls) => (
