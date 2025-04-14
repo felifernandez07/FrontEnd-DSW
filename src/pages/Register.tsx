@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { toast } from 'react-toastify'
 
 interface ClientClass {
   id: string
@@ -27,14 +28,12 @@ const Register = () => {
   })
 
   const [clientClasses, setClientClasses] = useState<ClientClass[]>([])
-  const [validationError, setValidationError] = useState('')
-  const [serverError, setServerError] = useState('')
 
   useEffect(() => {
     fetch('http://localhost:3000/api/client/classes')
       .then(res => res.json())
       .then(data => setClientClasses(data.data))
-      .catch(err => console.error('Error al cargar clases de cliente:', err))
+      .catch(() => toast.error('Error al cargar clases de cliente'))
   }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -58,10 +57,7 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const error = validateFields()
-    if (error) return setValidationError(error)
-
-    setValidationError('')
-    setServerError('')
+    if (error) return toast.error(error)
 
     try {
       const res = await fetch('http://localhost:3000/api/clients', {
@@ -71,13 +67,13 @@ const Register = () => {
       })
 
       const data = await res.json()
-      if (!res.ok) return setServerError(data.message || 'Error al registrar')
+      if (!res.ok) return toast.error(data.message || 'Error al registrar')
 
-      alert('¡Registrado con éxito! Ahora podés iniciar sesión.')
+      toast.success('¡Registrado con éxito! Ahora podés iniciar sesión.')
       navigate('/login')
     } catch (error) {
       console.error(error)
-      setServerError('Error al conectar con el servidor')
+      toast.error('Error al conectar con el servidor')
     }
   }
 
@@ -115,9 +111,6 @@ const Register = () => {
         <button type="submit" style={{ padding: '10px', backgroundColor: '#b87441', color: 'white', border: 'none', borderRadius: 4, fontWeight: 'bold', cursor: 'pointer' }}>
           Registrarse
         </button>
-
-        {validationError && <p style={{ color: 'red' }}>{validationError}</p>}
-        {serverError && <p style={{ color: 'red' }}>{serverError}</p>}
       </form>
 
       <div style={{ marginTop: 20, textAlign: 'center' }}>

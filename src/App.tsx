@@ -1,6 +1,6 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import { Container } from "react-bootstrap"
-import { Home }  from "./pages/Home"
+import { Home } from "./pages/Home"
 import { Store } from "./pages/Store"
 import { About } from "./pages/About"
 import Login from './pages/Login'
@@ -8,14 +8,15 @@ import Register from './pages/Register'
 import Navbar from "./components/Navbar"
 import Personal from "./pages/Personal"
 import { ManageBrandsAndClasses } from "./pages/Manage"
-import Unauthorized  from "./pages/UnAuthorized"
+import Unauthorized from "./pages/UnAuthorized"
 import { ShoppingCartProvider } from "./context/ShoppingCartContext.tsx"
-import {StoreAdm} from "./pages/AdminStore" 
+import { StoreAdm } from "./pages/AdminStore"
 import { Checkout } from "./pages/Checkout.tsx"
-import { Navigate } from "react-router-dom"
 import { useShoppingCart } from "./context/ShoppingCartContext.tsx"
 import { ProtectedCheckout } from "./components/ProtectedCheckout.tsx"
 import { Success } from "./pages/Success.tsx"
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function AdminOnlyRoute({ children }: { children: JSX.Element }) {
   const user = JSON.parse(localStorage.getItem("user") || "null")
@@ -25,14 +26,12 @@ function AdminOnlyRoute({ children }: { children: JSX.Element }) {
   return children
 }
 
-
-
-
 function App() {
   return (
     <ShoppingCartProvider>
       <Navbar />
-      <Container className="mb-4"> 
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Container className="mb-4">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -41,17 +40,15 @@ function App() {
           <Route path="/personal" element={<Personal />} />
           <Route path="/store" element={<Store />} />
           <Route
-                path="/checkout"
-                element={
-                  <ProtectedCheckout>
-                  <Checkout />
-                  </ProtectedCheckout>
-                }
+            path="/checkout"
+            element={
+              <ProtectedCheckout>
+                <Checkout />
+              </ProtectedCheckout>
+            }
           />
-
           <Route path="/success" element={<Success />} />
-
-          <Route 
+          <Route
             path="/adm-store"
             element={
               <AdminOnlyRoute>
@@ -59,7 +56,7 @@ function App() {
               </AdminOnlyRoute>
             }
           />
-          <Route 
+          <Route
             path="/manage"
             element={
               <AdminOnlyRoute>

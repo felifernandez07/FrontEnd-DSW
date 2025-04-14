@@ -3,7 +3,8 @@ import { StoreAdmin } from "../components/StoreAdmin";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { AddProductForm } from "../components/AddProductForm";
-import { ScrollToTopButton } from "../components/ScrollToTopButton"; // Asegúrate de que este componente exista
+import { ScrollToTopButton } from "../components/ScrollToTopButton";
+import { toast } from "react-toastify";
 
 type Product = {
   id: string;
@@ -21,7 +22,7 @@ export function StoreAdm() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const limit = 8;
+  const limit = 9;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: string; nombre: string } | null>(null);
 
@@ -37,6 +38,7 @@ export function StoreAdm() {
       setHasMore(page < data.totalPages);
     } catch (error) {
       console.error("Error al obtener productos:", error);
+      toast.error("Error al obtener productos");
     }
   };
 
@@ -53,15 +55,17 @@ export function StoreAdm() {
         setProducts([]);
         setShowDeleteModal(false);
         setItemToDelete(null);
+        toast.success("Producto eliminado correctamente");
       } catch (error) {
         console.error("Error al eliminar el producto:", error);
-        // Aquí podrías agregar alguna notificación al usuario sobre el error
+        toast.error("Error al eliminar el producto");
       }
     }
   };
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
+    toast.info("Producto cargado para editar");
   };
 
   useEffect(() => {

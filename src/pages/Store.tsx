@@ -1,15 +1,10 @@
-import { Col, Row } from "react-bootstrap"
+import { Col, Row, Button } from "react-bootstrap"
 import { StoreItem } from "../components/StoreItem.tsx"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useSearchParams } from "react-router-dom"
 import Slider from "rc-slider"
 import 'rc-slider/assets/index.css'
-
-import type { SliderProps } from "rc-slider"
-
-
-
 
 type Product = {
   id: string;
@@ -40,25 +35,38 @@ export function Store() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [priceOrder, setPriceOrder] = useState<'asc' | 'desc' | ''>('')
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const limit = 9
 
   const [searchParams] = useSearchParams()
   const initialSearch = searchParams.get("search") || ""
   const [searchTerm, setSearchTerm] = useState(initialSearch)
 
   const fetchProducts = async () => {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`)
-    setProducts(response.data.data)
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products?page=${page}&limit=${limit}`)
+      const data = response.data
+      setProducts(prev => page === 1 ? data.data : [...prev, ...data.data])
+      setHasMore(page < data.totalPages)
+    } catch (error) {
+      console.error("Error al obtener productos", error)
+    }
   }
 
   const fetchCategories = async () => {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`)
-    setCategories(response.data.data)
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`)
+      setCategories(response.data.data)
+    } catch (error) {
+      console.error("Error al obtener categorías", error)
+    }
   }
 
   useEffect(() => {
     fetchProducts()
     fetchCategories()
-  }, [])
+  }, [page])
 
   let filteredProducts = products.filter(product => {
     const nombre = product.nombre?.toLowerCase() || ''
@@ -163,6 +171,14 @@ export function Store() {
           No se encontraron productos que coincidan con los filtros seleccionados.
         </div>
       )}
+
+      {hasMore && (
+        <div className="text-center mt-4">
+          <Button onClick={() => setPage(prev => prev + 1)}>Ver más</Button>
+        </div>
+      )}
     </>
   )
 }
+
+

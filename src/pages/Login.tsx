@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const Login = () => {
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,14 +23,12 @@ const Login = () => {
       const data = await res.json()
   
       if (!res.ok) {
-        setError(data.message || 'Error al iniciar sesión')
+        toast.error(data.message || 'Error al iniciar sesión')
         return
       }
   
-      // ✅ Guardar token
       localStorage.setItem('token', data.token)
-  
-      // ✅ Obtener perfil del usuario con el token
+
       const meRes = await fetch('http://localhost:3000/api/auth/me', {
         headers: {
           Authorization: `Bearer ${data.token}`,
@@ -40,21 +38,19 @@ const Login = () => {
       const meData = await meRes.json()
   
       if (!meRes.ok) {
-        setError('No se pudo obtener el perfil del usuario')
+        toast.error('No se pudo obtener el perfil del usuario')
         return
       }
   
-      // ✅ Guardar usuario en localStorage
       localStorage.setItem('user', JSON.stringify(meData.user))
-
       localStorage.setItem('clientEmail', meData.user.email)
 
-  
-      // ✅ Redirigir
+      toast.success("Inicio de sesión exitoso ✅")
+
       navigate('/store')
     } catch (err) {
       console.error(err)
-      setError('Error al conectar con el servidor')
+      toast.error('Error al conectar con el servidor')
     }
   }
 
@@ -65,19 +61,19 @@ const Login = () => {
         <div style={{ marginBottom: 10 }}>
           <label htmlFor='email'>Email</label>
           <input
-          id='email'
+            id='email'
             type="email"
             value={email}
             required
             onChange={e => setEmail(e.target.value)}
-             className='login-input'
+            className='login-input'
             style={{ width: '100%', padding: 8 }}
           />
         </div>
         <div style={{ marginBottom: 10 }}>
           <label htmlFor='password'>Contraseña</label>
           <input
-          id='password'
+            id='password'
             type="password"
             value={password}
             required
@@ -86,7 +82,6 @@ const Login = () => {
             style={{ width: '100%', padding: 8 }}
           />
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit" style={{ padding: '10px 20px' }}>
           Entrar
         </button>

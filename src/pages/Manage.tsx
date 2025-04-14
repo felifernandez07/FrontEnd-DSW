@@ -6,6 +6,7 @@ import { AddBrandForm } from "../components/AddBrandForm";
 import { AddClassForm } from "../components/AddClassForm";
 import { ScrollToTopButton } from "../components/ScrollToTopButton";
 import { AutoScroll } from "../components/AutoScroll";
+import { toast } from "react-toastify";
 
 interface Brand {
   id: string;
@@ -58,7 +59,7 @@ export function ManageBrandsAndClasses() {
       });
       setBrands(response.data.data);
     } catch (error) {
-      console.error("Error al obtener las marcas", error);
+      toast.error("Error al obtener las marcas");
     }
   };
 
@@ -69,7 +70,7 @@ export function ManageBrandsAndClasses() {
       });
       setClasses(response.data.data);
     } catch (error) {
-      console.error("Error al obtener las clases", error);
+      toast.error("Error al obtener las clases");
     }
   };
 
@@ -91,8 +92,9 @@ export function ManageBrandsAndClasses() {
       fetchBrands();
       setEditingBrand(null);
       setBrandEdits({ nombre: "", descripcion: "" });
+      toast.success("Marca actualizada correctamente");
     } catch (error) {
-      console.error("Error al guardar la edición de la marca", error);
+      toast.error("Error al actualizar la marca");
     }
   };
 
@@ -104,8 +106,9 @@ export function ManageBrandsAndClasses() {
       fetchClasses();
       setEditingClass(null);
       setClassEdits({ name: "", description: "" });
+      toast.success("Clase actualizada correctamente");
     } catch (error) {
-      console.error("Error al guardar la edición de la clase", error);
+      toast.error("Error al actualizar la clase");
     }
   };
 
@@ -121,14 +124,16 @@ export function ManageBrandsAndClasses() {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         fetchBrands();
+        toast.success("Marca eliminada correctamente");
       } else if (selectedItem?.type === "class") {
         await axios.delete(`http://localhost:3000/api/product/classes/${selectedItem.id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         fetchClasses();
+        toast.success("Clase eliminada correctamente");
       }
     } catch (error) {
-      console.error("Error al eliminar", error);
+      toast.error("Error al eliminar el elemento");
     } finally {
       setShowDeleteModal(false);
       setSelectedItem(null);

@@ -4,6 +4,7 @@ import { useShoppingCart } from "../context/ShoppingCartContext"
 import { useNavigate } from "react-router-dom"
 import { formatCurrency } from "../utilities/formatCurrency"
 import { useState, useEffect } from "react"
+import { toast } from "react-toastify"
 
 export function Checkout() {
   const { cartItems, products, clearCart } = useShoppingCart()
@@ -43,8 +44,10 @@ export function Checkout() {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orders`, order)
 
       localStorage.setItem("lastOrderId", response.data.orderId)
-
       clearCart()
+
+      toast.success("Pedido enviado correctamente")
+
       navigate("/success", {
         state: {
           orderId: response.data.orderId,
@@ -52,7 +55,8 @@ export function Checkout() {
         }
       })
     } catch (error: any) {
-      alert("Error al procesar la orden.")
+      console.error("Error al procesar la orden:", error)
+      toast.error(error.response?.data?.message || "Error al procesar la orden")
     }
   }
 
@@ -139,8 +143,6 @@ export function Checkout() {
 
             <Form.Text muted className="mb-3 d-block">
               📧 El comprobante será enviado a: <strong>{clientEmail}</strong>
-           
-
             </Form.Text>
 
             <Button variant="success" type="submit">
