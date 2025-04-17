@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom"
 import Slider from "rc-slider"
 import 'rc-slider/assets/index.css'
 
+
 type Product = {
   id: string;
   nombre: string;

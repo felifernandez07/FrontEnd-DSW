@@ -18,6 +18,7 @@ import { Success } from "./pages/Success.tsx"
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+
 function AdminOnlyRoute({ children }: { children: JSX.Element }) {
   const user = JSON.parse(localStorage.getItem("user") || "null")
   if (!user || user.role !== "admin") {
@@ -65,6 +66,9 @@ function App() {
             }
           />
           <Route path="/unauthorized" element={<Unauthorized />} />
+
+         
+
         </Routes>
       </Container>
     </ShoppingCartProvider>
