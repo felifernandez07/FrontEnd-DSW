@@ -38,7 +38,7 @@ export function Store() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
-  const limit = 9
+  const limit = 8
 
   const [searchParams] = useSearchParams()
   const initialSearch = searchParams.get("search") || ""

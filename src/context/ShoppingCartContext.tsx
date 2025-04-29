@@ -55,8 +55,19 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/products`);
-      setProducts(response.data.data);
+      let page = 1;
+      let allProducts: Product[] = [];
+      let hasMore = true;
+
+      while (hasMore) {
+        const response = await axios.get(`${API_URL}/api/products?page=${page}&limit=9`);
+        const data = response.data;
+        allProducts = [...allProducts, ...data.data];
+        hasMore = page < data.totalPages;
+        page++;
+      }
+
+      setProducts(allProducts);
     } catch (error) {
       console.error("Error fetching products", error);
     }
@@ -134,5 +145,6 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     </ShoppingCartContext.Provider>
   );
 }
+
 
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Card, Container } from "react-bootstrap";
+import { Form, Button, Card, Container, Image } from "react-bootstrap";
 import { API_URL } from "../config/api";
 import { toast } from "react-toastify";
 
@@ -47,6 +47,9 @@ export function AddProductForm({
     productClass: "",
   });
 
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const [brands, setBrands] = useState<Brand[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const navigate = useNavigate();
@@ -56,7 +59,7 @@ export function AddProductForm({
       try {
         const response = await axios.get(`${API_URL}/api/product/brands`);
         setBrands(Array.isArray(response.data.data) ? response.data.data : []);
-      } catch (error) {
+      } catch {
         toast.error("Error al obtener las marcas");
       }
     };
@@ -65,7 +68,7 @@ export function AddProductForm({
       try {
         const response = await axios.get(`${API_URL}/api/product/classes`);
         setClasses(Array.isArray(response.data.data) ? response.data.data : []);
-      } catch (error) {
+      } catch {
         toast.error("Error al obtener las clases");
       }
     };
@@ -94,17 +97,35 @@ export function AddProductForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const data = new FormData();
+    Object.entries(formData).forEach(([key, value]) => data.append(key, value));
+    if (image) data.append("image", image);
+
     try {
       if (selectedProduct) {
-        await axios.put(`${API_URL}/api/products/${selectedProduct.id}`, formData);
+        await axios.put(`${API_URL}/api/products/${selectedProduct.id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         toast.success("Producto actualizado correctamente");
         setSelectedProduct(null);
       } else {
-        await axios.post(`${API_URL}/api/products`, formData);
+        await axios.post(`${API_URL}/api/products`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         toast.success("Producto agregado correctamente");
       }
+
       onProductAdded();
       setFormData({
         nombre: "",
@@ -114,7 +135,9 @@ export function AddProductForm({
         productBrand: "",
         productClass: "",
       });
-    } catch (error: any) {
+      setImage(null);
+      setImagePreview(null);
+    } catch (error) {
       toast.error("Error al agregar o actualizar producto");
     }
   };
@@ -126,7 +149,7 @@ export function AddProductForm({
   return (
     <Card className="mb-4">
       <Card.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} encType="multipart/form-data">
           <Form.Group className="mb-3">
             <Form.Control
               name="nombre"
@@ -201,6 +224,20 @@ export function AddProductForm({
             </Form.Select>
           </Form.Group>
 
+          <Form.Group className="mb-3">
+            <Form.Label>Imagen del producto</Form.Label>
+            <Form.Control type="file" accept="image/*" onChange={handleImageChange} />
+            {imagePreview && (
+              <Image
+                src={imagePreview}
+                alt="Vista previa"
+                thumbnail
+                fluid
+                className="mt-3"
+              />
+            )}
+          </Form.Group>
+
           <Button variant="primary" type="submit" className="w-100">
             {selectedProduct ? "Actualizar Producto" : "Agregar Producto"}
           </Button>
@@ -214,3 +251,4 @@ export function AddProductForm({
     </Card>
   );
 }
+

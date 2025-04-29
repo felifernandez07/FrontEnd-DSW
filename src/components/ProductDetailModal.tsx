@@ -24,7 +24,6 @@ export const ProductDetailModal = ({ show, onClose, product }: Props) => {
     }
   
     increaseCartQuantity(product.id)
-    toast.success("Producto agregado al carrito")
     onClose()
   }
   
