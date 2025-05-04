@@ -35,10 +35,10 @@ export function Store() {
   const [categories, setCategories] = useState<{ id: string; nombre: string }[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [priceOrder, setPriceOrder] = useState<'asc' | 'desc' | ''>('')
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000])
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 60000])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
-  const limit = 8
+  const limit = 9
 
   const [searchParams] = useSearchParams()
   const initialSearch = searchParams.get("search") || ""
@@ -133,11 +133,11 @@ export function Store() {
           <Slider
             range
             min={0}
-            max={30000}
+            max={60000}
             step={100}
             defaultValue={priceRange}
             onChange={(value) => setPriceRange(value as [number, number])}
-            marks={{ 0: '$0', 30000: '$30k' }}
+            marks={{ 0: '$0', 60000: '$60k' }}
           />
           <div className="mt-4">
             <small>Desde: ${priceRange[0]} — Hasta: ${priceRange[1]}</small>
