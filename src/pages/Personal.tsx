@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { API_URL } from "../utilities/apiConfig";
 
 interface User {
   name: string
@@ -20,7 +21,7 @@ const Profile = () => {
       return
     }
 
-    fetch('http://localhost:3000/api/auth/me', {
+    fetch(`${API_URL}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

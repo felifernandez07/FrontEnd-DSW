@@ -7,6 +7,7 @@ import { AddClassForm } from "../components/AddClassForm";
 import { ScrollToTopButton } from "../components/ScrollToTopButton";
 import { AutoScroll } from "../components/AutoScroll";
 import { toast } from "react-toastify";
+import { API_URL } from "../utilities/apiConfig"; // Asegúrate de importar la variable API_URL
 
 interface Brand {
   id: string;
@@ -54,7 +55,7 @@ export function ManageBrandsAndClasses() {
 
   const fetchBrands = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/product/brands", {
+      const response = await axios.get(`${API_URL}/api/product/brands`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setBrands(response.data.data);
@@ -65,7 +66,7 @@ export function ManageBrandsAndClasses() {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/product/classes", {
+      const response = await axios.get(`${API_URL}/api/product/classes`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setClasses(response.data.data);
@@ -86,7 +87,7 @@ export function ManageBrandsAndClasses() {
 
   const saveBrandEdit = async (brandId: string) => {
     try {
-      await axios.put(`http://localhost:3000/api/product/brands/${brandId}`, brandEdits, {
+      await axios.put(`${API_URL}/api/product/brands/${brandId}`, brandEdits, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       fetchBrands();
@@ -100,7 +101,7 @@ export function ManageBrandsAndClasses() {
 
   const saveClassEdit = async (classId: string) => {
     try {
-      await axios.put(`http://localhost:3000/api/product/classes/${classId}`, classEdits, {
+      await axios.put(`${API_URL}/api/product/classes/${classId}`, classEdits, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       fetchClasses();
@@ -120,13 +121,13 @@ export function ManageBrandsAndClasses() {
   const handleDelete = async () => {
     try {
       if (selectedItem?.type === "brand") {
-        await axios.delete(`http://localhost:3000/api/product/brands/${selectedItem.id}`, {
+        await axios.delete(`${API_URL}/api/product/brands/${selectedItem.id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         fetchBrands();
         toast.success("Marca eliminada correctamente");
       } else if (selectedItem?.type === "class") {
-        await axios.delete(`http://localhost:3000/api/product/classes/${selectedItem.id}`, {
+        await axios.delete(`${API_URL}/api/product/classes/${selectedItem.id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         fetchClasses();

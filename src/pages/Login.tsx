@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { API_URL } from "../utilities/apiConfig";
 
 const Login = () => {
   const navigate = useNavigate()
@@ -12,7 +13,7 @@ const Login = () => {
     e.preventDefault()
   
     try {
-      const res = await fetch('http://localhost:3000/api/auth/login', {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +30,7 @@ const Login = () => {
   
       localStorage.setItem('token', data.token)
 
-      const meRes = await fetch('http://localhost:3000/api/auth/me', {
+      const meRes = await fetch(`${API_URL}/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${data.token}`,
         },

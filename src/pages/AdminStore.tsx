@@ -5,6 +5,7 @@ import axios from "axios";
 import { AddProductForm } from "../components/AddProductForm";
 import { ScrollToTopButton } from "../components/ScrollToTopButton";
 import { toast } from "react-toastify";
+import { API_URL } from "../utilities/apiConfig";
 
 type Product = {
   id: string;
@@ -29,7 +30,7 @@ export function StoreAdm() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/products?page=${page}&limit=${limit}`
+        `${API_URL}/api/products?page=${page}&limit=${limit}`
       );
       const data = response.data;
       setProducts((prev) =>
@@ -50,7 +51,7 @@ export function StoreAdm() {
   const handleDelete = async () => {
     if (itemToDelete?.id) {
       try {
-        await axios.delete(`http://localhost:3000/api/products/${itemToDelete.id}`);
+        await axios.delete(`${API_URL}/api/products/${itemToDelete.id}`);
         setPage(1);
         setProducts([]);
         setShowDeleteModal(false);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import { toast } from 'react-toastify'
-
+import { API_URL } from "../utilities/apiConfig";
 interface ClientClass {
   id: string
   name: string
@@ -30,7 +30,7 @@ const Register = () => {
   const [clientClasses, setClientClasses] = useState<ClientClass[]>([])
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/client/classes')
+    fetch(`${API_URL}/api/client/classes`)
       .then(res => res.json())
       .then(data => setClientClasses(data.data))
       .catch(() => toast.error('Error al cargar clases de cliente'))
@@ -60,7 +60,7 @@ const Register = () => {
     if (error) return toast.error(error)
 
     try {
-      const res = await fetch('http://localhost:3000/api/clients', {
+      const res = await fetch(`${API_URL}/api/clients`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

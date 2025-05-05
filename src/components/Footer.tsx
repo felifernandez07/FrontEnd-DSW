@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import "./Footer.css";
+import { API_URL } from "../utilities/apiConfig";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +12,7 @@ const Footer = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/api/send-email", {
+      const response = await fetch(`${API_URL}/api/send-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
