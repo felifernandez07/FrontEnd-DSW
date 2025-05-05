@@ -1,5 +1,14 @@
-# Logs
-logs
+# Node.js dependencies
+node_modules/
+.pnpm/
+
+# Build directories
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# Files de configuración
+.env          # Si usas .env para variables de entorno en Render, quita este comentario
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,15 +16,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# Editor config
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# Archivos de sistema
 .DS_Store
 *.suo
 *.ntvs*
@@ -23,13 +29,5 @@ dist-ssr
 *.sln
 *.sw?
 
-
-.env
-# Ignorar dependencias
-node_modules/
-.pnpm/
-
-# Ignorar archivos de compilación de TypeScript
-dist/
-*.tsbuildinfo
-
+# Otros archivos generados que no necesitan ser subidos
+*.local
