@@ -20,7 +20,7 @@ lerna-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea
-
+!pnpm-lock.yaml
 # Archivos de sistema
 .DS_Store
 *.suo
