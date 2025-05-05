@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import "./About.css";

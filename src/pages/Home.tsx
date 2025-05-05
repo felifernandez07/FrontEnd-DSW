@@ -1,8 +1,6 @@
-import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import { FaCoffee, FaLeaf, FaTruck,FaArrowLeft, FaArrowRight  } from "react-icons/fa";
+import { FaCoffee, FaLeaf, FaTruck  } from "react-icons/fa";
 import "./Home.css";
-import Slider from "react-slick";
 import Carousel from '../components/Carousel';
 import Footer from "../components/Footer";
 

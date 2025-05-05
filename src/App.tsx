@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import { Container } from "react-bootstrap"
 import { Home } from "./pages/Home"
 import { Store } from "./pages/Store"
@@ -12,7 +12,6 @@ import Unauthorized from "./pages/UnAuthorized"
 import { ShoppingCartProvider } from "./context/ShoppingCartContext.tsx"
 import { StoreAdm } from "./pages/AdminStore"
 import { Checkout } from "./pages/Checkout.tsx"
-import { useShoppingCart } from "./context/ShoppingCartContext.tsx"
 import { ProtectedCheckout } from "./components/ProtectedCheckout.tsx"
 import { Success } from "./pages/Success.tsx"
 import { ToastContainer } from 'react-toastify'
