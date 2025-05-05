@@ -1,27 +1,29 @@
-# Node.js dependencies
+# Dependencias de Node
 node_modules/
 .pnpm/
 
-# Build directories
+# Archivos de compilación
 dist/
 dist-ssr/
 *.tsbuildinfo
 
-# Files de configuración
-.env          # Si usas .env para variables de entorno en Render, quita este comentario
+# Archivos de entorno
+.env
+
+# Logs
 *.log
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 lerna-debug.log*
 
-# Editor config
+# Configuración de editores (opcional)
 .vscode/*
 !.vscode/extensions.json
-.idea
-!pnpm-lock.yaml
-# Archivos de sistema
+.idea/
+
+# Archivos del sistema
 .DS_Store
 *.suo
 *.ntvs*
@@ -29,5 +31,5 @@ lerna-debug.log*
 *.sln
 *.sw?
 
-# Otros archivos generados que no necesitan ser subidos
+# Archivos locales
 *.local
