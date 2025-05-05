@@ -38,7 +38,7 @@ export function Home() {
         </Col>
         <Col md={6}>
           <img
-            src="public/imgs/flat.jpg"
+            src="/imgs/flat.jpg"
             alt="Café destacado"
             className="img-fluid home-img rounded shadow-lg"
           />

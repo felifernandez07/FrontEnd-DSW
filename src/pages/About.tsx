@@ -22,7 +22,7 @@ export function About() {
       <Row className="align-items-start mb-5">
         <Col md={5}>
           <img
-            src="public/imgs/Coffee-Bean-Extract.png"
+            src="/imgs/Coffee-Bean-Extract.png"
             alt="Café en taza"
             className="img-fluid about-img rounded shadow-lg"
           />
