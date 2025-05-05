@@ -6,7 +6,6 @@ import {
   Navbar as NavbarBs,
   Form,
   FormControl,
-  NavDropdown,
 } from "react-bootstrap"
 import { NavLink, useLocation, useNavigate, Link } from "react-router-dom"
 import { useShoppingCart } from "../context/ShoppingCartContext.tsx"
