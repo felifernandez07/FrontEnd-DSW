@@ -46,7 +46,7 @@ export function Store() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}api/products?page=${page}&limit=${limit}`)
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/products?page=${page}&limit=${limit}`)
       const data = response.data
       setProducts(prev => page === 1 ? data.data : [...prev, ...data.data])
       setHasMore(page < data.totalPages)
