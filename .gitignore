@@ -33,5 +33,3 @@ node_modules/
 dist/
 *.tsbuildinfo
 
-# Ignorar lockfiles si no querés trackearlos (no siempre recomendable)
-pnpm-lock.yaml
