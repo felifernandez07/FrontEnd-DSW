@@ -31,8 +31,16 @@ export function Checkout() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-
+  
     try {
+      const token = localStorage.getItem("token") // ✅ obtiene el token
+  
+      if (!token) {
+        toast.error("Debés iniciar sesión para confirmar el pedido.")
+        navigate("/login")
+        return
+      }
+  
       const order = {
         name,
         dni,
@@ -44,14 +52,23 @@ export function Checkout() {
         email: clientEmail,
         items: cartItems
       }
-
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orders`, order)
-
+  
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/orders`,
+        order,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          withCredentials: true // ✅ habilita envío del token en producción
+        }
+      )
+  
       localStorage.setItem("lastOrderId", response.data.orderId)
       clearCart()
-
+  
       toast.success("Pedido enviado correctamente")
-
+  
       navigate("/success", {
         state: {
           orderId: response.data.orderId,
@@ -61,10 +78,13 @@ export function Checkout() {
     } catch (error: any) {
       console.error("Error al procesar la orden:", error)
       toast.error(error.response?.data?.message || "Error al procesar la orden")
+      if (error.response?.status === 401) {
+        navigate("/login")
+      }
     } finally {
-      setLoading(false)}
-  }
-
+      setLoading(false)
+    }
+  }  
   if (loading) return <LoadingSpinner />
 
   return (
