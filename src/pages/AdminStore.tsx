@@ -6,6 +6,7 @@ import { AddProductForm } from "../components/AddProductForm";
 import { ScrollToTopButton } from "../components/ScrollToTopButton";
 import { toast } from "react-toastify";
 import { API_URL } from "../utilities/apiConfig";
+import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 
 type Product = {
   id: string;
@@ -26,9 +27,12 @@ export function StoreAdm() {
   const limit = 8;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: string; nombre: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+
 
   const fetchProducts = async () => {
     try {
+      if (page === 1) setLoading(true);
       const response = await axios.get(
         `${API_URL}/api/products?page=${page}&limit=${limit}`
       );
@@ -40,6 +44,8 @@ export function StoreAdm() {
     } catch (error) {
       console.error("Error al obtener productos:", error);
       toast.error("Error al obtener productos");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,6 +79,8 @@ export function StoreAdm() {
     fetchProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <Container>

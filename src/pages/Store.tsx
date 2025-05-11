@@ -5,7 +5,7 @@ import axios from "axios"
 import { useSearchParams } from "react-router-dom"
 import Slider from "rc-slider"
 import 'rc-slider/assets/index.css'
-
+import { LoadingSpinner } from "../components/LoadingSpinner.tsx"
 
 type Product = {
   id: string;
@@ -38,6 +38,8 @@ export function Store() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 60000])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(true)
+
   const limit = 9
 
   const [searchParams] = useSearchParams()
@@ -52,12 +54,14 @@ export function Store() {
       setHasMore(page < data.totalPages)
     } catch (error) {
       console.error("Error al obtener productos", error)
+    } finally {
+      setLoading(false)
     }
   }
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/product/implementar`) //esta bug aproposito a implementar
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/product/implementar`)
       setCategories(response.data.data)
     } catch (error) {
       console.error("Error al obtener categorías", error)
@@ -65,6 +69,8 @@ export function Store() {
   }
 
   useEffect(() => {
+    // Solo mostrar loading en primera carga
+    if (page === 1) setLoading(true)
     fetchProducts()
     fetchCategories()
   }, [page])
@@ -96,6 +102,8 @@ export function Store() {
   } else if (priceOrder === 'desc') {
     filteredProducts = filteredProducts.sort((a, b) => parseFloat(b.precio) - parseFloat(a.precio))
   }
+
+  if (loading) return <LoadingSpinner />
 
   return (
     <>
@@ -181,5 +189,3 @@ export function Store() {
     </>
   )
 }
-
-

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { formatCurrency } from "../utilities/formatCurrency"
 import { useState, useEffect } from "react"
 import { toast } from "react-toastify"
+import { LoadingSpinner } from "../components/LoadingSpinner.tsx"
 
 export function Checkout() {
   const { cartItems, products, clearCart } = useShoppingCart()
@@ -15,6 +16,8 @@ export function Checkout() {
   const [postalCode, setPostalCode] = useState("")
   const [phone, setPhone] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("Tarjeta de crédito")
+  const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -27,6 +30,7 @@ export function Checkout() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
 
     try {
       const order = {
@@ -57,8 +61,11 @@ export function Checkout() {
     } catch (error: any) {
       console.error("Error al procesar la orden:", error)
       toast.error(error.response?.data?.message || "Error al procesar la orden")
-    }
+    } finally {
+      setLoading(false)}
   }
+
+  if (loading) return <LoadingSpinner />
 
   return (
     <Container className="mt-4">
