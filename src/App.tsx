@@ -15,7 +15,10 @@ import { Checkout } from "./pages/Checkout.tsx"
 import { ProtectedCheckout } from "./components/ProtectedCheckout.tsx"
 import { Success } from "./pages/Success.tsx"
 import { ToastContainer } from 'react-toastify'
+import MyOrders from "./pages/MyOrders" 
 import 'react-toastify/dist/ReactToastify.css'
+import { PrivateRoute } from "./components/PrivateRoutes"
+
 
 
 function AdminOnlyRoute({ children }: { children: JSX.Element }) {
@@ -38,6 +41,14 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/personal" element={<Personal />} />
+          <Route
+            path="/my-orders"
+            element={
+              <PrivateRoute>
+                <MyOrders />
+              </PrivateRoute>
+            }
+          />
           <Route path="/store" element={<Store />} />
           <Route
             path="/checkout"
